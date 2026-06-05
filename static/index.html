@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatea con tus PDFs</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Panel lateral: subida y lista de documentos -->
+      <aside class="sidebar">
+        <header class="brand">
+          <div class="logo">📄</div>
+          <div>
+            <h1>Chatea con tus PDFs</h1>
+            <p class="subtitle">RAG · Voyage + Qdrant + Claude</p>
+          </div>
+        </header>
+
+        <section class="upload">
+          <label
+            id="dropzone"
+            class="dropzone"
+            for="file-input"
+            tabindex="0"
+          >
+            <span class="dropzone-icon">⬆️</span>
+            <span class="dropzone-text">
+              Arrastra PDFs aquí o <strong>haz clic</strong>
+            </span>
+            <span class="dropzone-hint">Puedes subir varios a la vez</span>
+            <input
+              id="file-input"
+              type="file"
+              accept="application/pdf"
+              multiple
+              hidden
+            />
+          </label>
+          <div id="upload-status" class="upload-status" hidden></div>
+        </section>
+
+        <section class="documents">
+          <div class="documents-head">
+            <h2>Documentos</h2>
+            <button id="refresh-docs" class="icon-btn" title="Actualizar">
+              ⟳
+            </button>
+          </div>
+          <ul id="doc-list" class="doc-list">
+            <li class="doc-empty">Aún no has subido documentos.</li>
+          </ul>
+        </section>
+      </aside>
+
+      <!-- Panel principal: chat -->
+      <main class="chat">
+        <div class="chat-toolbar">
+          <label for="doc-filter">Buscar en:</label>
+          <select id="doc-filter">
+            <option value="">Todos los documentos</option>
+          </select>
+        </div>
+
+        <div id="messages" class="messages">
+          <div class="welcome">
+            <h2>👋 Hazme una pregunta</h2>
+            <p>
+              Sube uno o varios PDFs y pregúntame lo que quieras. Responderé
+              usando solo el contenido de tus documentos y te mostraré las
+              fuentes.
+            </p>
+          </div>
+        </div>
+
+        <form id="chat-form" class="composer">
+          <textarea
+            id="question"
+            class="composer-input"
+            placeholder="Escribe tu pregunta…"
+            rows="1"
+            autocomplete="off"
+          ></textarea>
+          <button id="send-btn" type="submit" class="send-btn">Enviar</button>
+        </form>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+# Despliegue en Render (https://render.com) con un solo servicio web.
+# El frontend estático lo sirve el mismo proceso de FastAPI.
+services:
+  - type: web
+    name: chatea-con-tus-pdfs
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL
+        value: claude-sonnet-4-6
+      - key: VOYAGE_API_KEY
+        sync: false
+      - key: VOYAGE_MODEL
+        value: voyage-3
+      - key: EMBEDDING_DIM
+        value: "1024"
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: QDRANT_COLLECTION
+        value: pdf_chunks
