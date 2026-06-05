@@ -6,14 +6,18 @@ despliegue gratuito (un único proceso en Render/Railway).
 
 from __future__ import annotations
 
+import logging
+import traceback
 from pathlib import Path
 
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.routers import chat, documents
+
+logger = logging.getLogger("chatbot")
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
@@ -28,6 +32,20 @@ app = FastAPI(
 
 app.include_router(documents.router)
 app.include_router(chat.router)
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Devuelve el error real (no un genérico 500) y lo deja en los logs.
+
+    Facilita diagnosticar problemas en producción (p. ej. fallos de conexión a
+    servicios externos) mostrando el tipo y mensaje de la excepción.
+    """
+    logger.error("Error no manejado en %s:\n%s", request.url.path, traceback.format_exc())
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"{type(exc).__name__}: {exc}"},
+    )
 
 
 @app.get("/health", tags=["meta"], summary="Healthcheck")

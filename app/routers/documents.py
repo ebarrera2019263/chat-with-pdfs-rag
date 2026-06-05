@@ -27,7 +27,10 @@ router = APIRouter(prefix="/documents", tags=["documents"])
 async def ingest_documents(files: list[UploadFile] = File(...)) -> IngestResponse:
     """Extrae texto, hace chunking, genera embeddings e indexa en Qdrant."""
     settings = get_settings()
-    vectorstore.ensure_collection()
+    try:
+        vectorstore.ensure_collection()
+    except vectorstore.VectorStoreError as exc:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
 
     results: list[IngestResult] = []
     for upload in files:

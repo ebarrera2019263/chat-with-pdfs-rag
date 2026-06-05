@@ -21,7 +21,10 @@ _SNIPPET_LEN = 280
 def _retrieve(req: ChatRequest) -> list[SearchHit]:
     """Embebe la pregunta y recupera los chunks más relevantes de Qdrant."""
     settings = get_settings()
-    vectorstore.ensure_collection()
+    try:
+        vectorstore.ensure_collection()
+    except vectorstore.VectorStoreError as exc:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
     try:
         query_vector = embeddings.embed_query(req.question)
     except embeddings.EmbeddingError as exc:
