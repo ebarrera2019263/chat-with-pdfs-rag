@@ -7,7 +7,7 @@ contiene secretos.
 
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -52,6 +52,25 @@ class Settings(BaseSettings):
     min_score: float = Field(
         0.3, description="Score mínimo de similitud para considerar un chunk relevante"
     )
+
+    @field_validator(
+        "anthropic_api_key",
+        "anthropic_model",
+        "voyage_api_key",
+        "voyage_model",
+        "qdrant_url",
+        "qdrant_api_key",
+        "qdrant_collection",
+        mode="before",
+    )
+    @classmethod
+    def _strip_whitespace(cls, value: str) -> str:
+        """Elimina espacios y saltos de línea accidentales al pegar claves.
+
+        Evita el clásico error 'Illegal header value' cuando una API key o URL
+        se copia con un \\n o espacios al final en el panel de deploy.
+        """
+        return value.strip() if isinstance(value, str) else value
 
 
 @lru_cache
